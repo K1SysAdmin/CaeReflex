@@ -1,0 +1,51 @@
+site_name: CaeReflex Wiki
+site_description: Agent-readable engineering evidence for simulation artefacts
+repo_url: https://github.com/caereflex/caereflex
+docs_dir: docs
+site_dir: site
+strict: true
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - tables
+  - fenced_code
+  - attr_list
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Install: user-guide/install.md
+      - Quickstart: user-guide/quickstart.md
+      - Examples: user-guide/examples.md
+      - Safe Use Policy: user-guide/safe-use-policy.md
+  - Architecture:
+      - Overview: architecture/index.md
+      - ReflexCase Schema: architecture/reflexcase-schema.md
+      - Services Layer: architecture/services-layer.md
+      - Adapters: architecture/adapters.md
+      - Exporters: architecture/exporters.md
+      - CrossRef: architecture/crossref.md
+      - CLI: architecture/cli.md
+      - REST API: architecture/rest-api.md
+  - Developer Guide:
+      - Contributing: developer-guide/contributing.md
+      - Testing: developer-guide/testing.md
+      - Adding Adapters: developer-guide/adding-adapters.md
+      - Release Controls: developer-guide/release-controls.md
+  - Reference:
+      - CLI Reference: reference/cli.md
+      - OpenAPI: reference/openapi.md
+      - ReflexCase Fields: reference/reflexcase-fields.md
+      - Licensing: reference/licensing.md
+      - Security: reference/security.md
+  - Releases:
+      - Overview: releases/index.md
+      - 1.0.0: releases/1.0.0.md
