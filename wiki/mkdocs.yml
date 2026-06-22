@@ -1,6 +1,6 @@
 site_name: CaeReflex Wiki
 site_description: Agent-readable engineering evidence for simulation artefacts
-repo_url: https://github.com/caereflex/caereflex
+repo_url: https://github.com/KNOWDYN/CaeReflex
 docs_dir: docs
 site_dir: site
 strict: true
