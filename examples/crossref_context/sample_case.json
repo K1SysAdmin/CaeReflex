@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "case_id": "case_sample_crossref",
+  "case_name": "openfoam_cavity_minimal",
+  "case_type": "openfoam",
+  "created_at": "2026-01-01T00:00:00+00:00",
+  "updated_at": "2026-01-01T00:00:00+00:00",
+  "caereflex_version": "1.0.0",
+  "workspace": {
+    "root_display": "examples/crossref_context",
+    "scan_depth": 0,
+    "file_count_considered": 0,
+    "limits": {}
+  },
+  "inspection": {
+    "status": "success",
+    "started_at": "2026-01-01T00:00:00+00:00",
+    "completed_at": "2026-01-01T00:00:01+00:00",
+    "messages": []
+  },
+  "detected_formats": [
+    "OpenFOAM case folder"
+  ],
+  "detected_tools": [
+    "OpenFOAM"
+  ],
+  "physics_tags": [
+    "CFD",
+    "finite volume",
+    "incompressible flow"
+  ],
+  "source_files": [],
+  "assets": [],
+  "solver_records": [],
+  "boundary_conditions": [],
+  "materials": [],
+  "numerical_settings": [],
+  "result_fields": [],
+  "literature_evidence": [],
+  "literature_context": {
+    "queries": [],
+    "records_used": [],
+    "summary": "",
+    "limitations": [],
+    "do_not_claim": [
+      "Do not claim that metadata-only records were read as full papers.",
+      "Do not claim that CrossRef evidence validates the simulation."
+    ]
+  },
+  "inspection_flags": [],
+  "provenance": [],
+  "agent_summary": {
+    "summary": "Sample CrossRef case.",
+    "safe_use_policy": [],
+    "recommended_next_actions": [],
+    "do_not_claim": []
+  },
+  "exports": [],
+  "metadata": {}
+}

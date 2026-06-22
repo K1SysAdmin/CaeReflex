@@ -1,0 +1,6 @@
+cff-version: 1.2.0
+title: CaeReflex
+authors:
+  - name: CaeReflex Project
+version: 1.0.0
+message: "If CaeReflex supports your research or teaching, please cite the software."

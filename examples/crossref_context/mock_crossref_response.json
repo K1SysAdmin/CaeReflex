@@ -1,0 +1,59 @@
+{
+  "status": "ok",
+  "message": {
+    "items": [
+      {
+        "DOI": "10.0000/example.cavity.1",
+        "title": [
+          "A benchmark study of incompressible lid-driven cavity flow"
+        ],
+        "author": [
+          {
+            "given": "Ada",
+            "family": "Lovelace"
+          }
+        ],
+        "published-print": {
+          "date-parts": [
+            [
+              2020
+            ]
+          ]
+        },
+        "container-title": [
+          "Journal of Example CFD"
+        ],
+        "URL": "https://doi.org/10.0000/example.cavity.1",
+        "abstract": "<jats:p>This metadata-only fixture describes an incompressible cavity benchmark.</jats:p>",
+        "type": "journal-article",
+        "publisher": "Example Publisher",
+        "is-referenced-by-count": 3
+      },
+      {
+        "DOI": "10.0000/example.openfoam.2",
+        "title": [
+          "Finite volume methods for cavity flow examples"
+        ],
+        "author": [
+          {
+            "given": "Grace",
+            "family": "Hopper"
+          }
+        ],
+        "issued": {
+          "date-parts": [
+            [
+              2019
+            ]
+          ]
+        },
+        "container-title": [
+          "Example Numerical Methods"
+        ],
+        "URL": "https://doi.org/10.0000/example.openfoam.2",
+        "type": "journal-article",
+        "publisher": "Example Publisher"
+      }
+    ]
+  }
+}

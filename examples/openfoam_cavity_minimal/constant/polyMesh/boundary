@@ -1,0 +1,27 @@
+4
+(
+    movingWall
+    {
+        type wall;
+        nFaces 20;
+        startFace 0;
+    }
+    fixedWalls
+    {
+        type wall;
+        nFaces 60;
+        startFace 20;
+    }
+    frontAndBack
+    {
+        type empty;
+        nFaces 2;
+        startFace 80;
+    }
+    internalPatch
+    {
+        type patch;
+        nFaces 0;
+        startFace 82;
+    }
+)

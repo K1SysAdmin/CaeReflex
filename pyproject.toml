@@ -1,0 +1,57 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "caereflex"
+version = "1.0.0"
+description = "Agent-readable engineering evidence layer for Gmsh, OpenFOAM, VTK and CrossRef metadata."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{name = "CaeReflex Project"}]
+license = {file = "LICENSE.md"}
+keywords = ["CAE", "CFD", "OpenFOAM", "Gmsh", "VTK", "CrossRef", "LLM agents"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering",
+]
+dependencies = [
+  "pydantic>=2,<3",
+  "typer>=0.12,<1",
+  "rich>=13,<15",
+  "httpx>=0.27,<1",
+  "pyyaml>=6,<7",
+  "bibtexparser>=1.4,<2",
+]
+
+[project.optional-dependencies]
+server = ["fastapi>=0.115,<1", "uvicorn>=0.30,<1"]
+mesh = ["numpy>=1.26,<3", "meshio>=5,<6"]
+vtk = ["pyvista>=0.44,<1", "vtk>=9,<10"]
+gmsh = ["gmsh>=4,<5"]
+dev = ["pytest>=8,<9"]
+all = [
+  "fastapi>=0.115,<1", "uvicorn>=0.30,<1",
+  "numpy>=1.26,<3", "meshio>=5,<6",
+  "pyvista>=0.44,<1", "vtk>=9,<10",
+  "gmsh>=4,<5",
+]
+
+[project.scripts]
+caereflex = "caereflex.cli.main:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["caereflex"]
+
+[tool.pytest.ini_options]
+markers = [
+  "live_crossref: tests that call the live CrossRef API",
+  "optional_mesh: tests requiring meshio/numpy",
+  "optional_vtk: tests requiring pyvista/vtk",
+  "optional_gmsh: tests requiring gmsh",
+  "server: REST server tests",
+  "slow: slow tests",
+]

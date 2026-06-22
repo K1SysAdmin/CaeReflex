@@ -1,0 +1,8 @@
+{
+  "safe_use_policy": [
+    "Treat CrossRef metadata as context, not validation."
+  ],
+  "do_not_claim": [
+    "Do not claim design safety."
+  ]
+}

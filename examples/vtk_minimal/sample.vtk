@@ -1,0 +1,20 @@
+# vtk DataFile Version 3.0
+CaeReflex tiny VTK example
+ASCII
+DATASET POLYDATA
+POINTS 4 float
+0 0 0
+1 0 0
+1 1 0
+0 1 0
+POLYGONS 1 5
+4 0 1 2 3
+POINT_DATA 4
+SCALARS pressure float 1
+LOOKUP_TABLE default
+0.0 0.1 0.2 0.1
+VECTORS velocity float
+0 0 0
+1 0 0
+1 1 0
+0 1 0
