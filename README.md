@@ -2,7 +2,7 @@
 
 CaeReflex is a source-available Python package that turns Gmsh, OpenFOAM, and ParaView/VTK-compatible simulation artefacts into structured, agent-readable, provenance-aware, CrossRef-grounded engineering cases.
 
-CaeReflex is an inspection and documentation aid. It does not run solvers, validate simulations, certify engineering results, prove convergence, assess mesh adequacy, or replace qualified engineering judgement.
+CaeReflex is an inspection and documentation aid. It allows you to connect any LLM agent to a CAE simulation case, and identify any related research from CrossRef. CaeReflex makes your LLM agent capable of understanding CAE simulation cases and include their information in its reasoning. CaeReflex does not run solvers, validate simulations, certify engineering results, prove convergence, assess mesh adequacy, or replace qualified engineering judgement.
 
 ## Install
 
