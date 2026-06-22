@@ -1,0 +1,163 @@
+name: Sync repository wiki
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "wiki/**"
+      - ".github/workflows/sync-wiki.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-wiki
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Sync /wiki/docs to GitHub Wiki
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build wiki export
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+
+          import re
+          import shutil
+          from pathlib import Path
+
+          src = Path("wiki/docs")
+          out = Path(".wiki-export")
+          if not src.is_dir():
+              raise SystemExit("wiki/docs does not exist")
+
+          if out.exists():
+              shutil.rmtree(out)
+          out.mkdir(parents=True)
+
+          files = sorted(src.rglob("*.md"))
+          if not files:
+              raise SystemExit("No Markdown files found in wiki/docs")
+
+          def title_part(value: str) -> str:
+              return value.replace("-", " ").replace("_", " ").title().replace(" ", "-")
+
+          def wiki_name(path: Path) -> str:
+              rel = path.relative_to(src)
+              if rel.as_posix() == "index.md":
+                  return "Home.md"
+              stem = rel.with_suffix("")
+              parts = list(stem.parts)
+              if parts[-1] == "index":
+                  parts = parts[:-1]
+              return "-".join(title_part(part) for part in parts) + ".md"
+
+          mapping = {path.relative_to(src).as_posix(): wiki_name(path) for path in files}
+
+          def rewrite_admonitions(text: str) -> str:
+              lines = text.splitlines()
+              out_lines: list[str] = []
+              i = 0
+              while i < len(lines):
+                  line = lines[i]
+                  match = re.match(r'^!!!\s+(\w+)\s+"([^"]+)"\s*$', line)
+                  if not match:
+                      out_lines.append(line)
+                      i += 1
+                      continue
+                  kind, title = match.groups()
+                  body: list[str] = []
+                  i += 1
+                  while i < len(lines) and (lines[i].startswith("    ") or not lines[i].strip()):
+                      body.append(lines[i][4:] if lines[i].startswith("    ") else lines[i])
+                      i += 1
+                  out_lines.append(f"> **{title} ({kind}):**")
+                  for body_line in body:
+                      out_lines.append(f"> {body_line}" if body_line else ">")
+              return "\n".join(out_lines) + ("\n" if text.endswith("\n") else "")
+
+          def rewrite_links(text: str, current: Path) -> str:
+              current_dir = current.parent
+
+              def replace(match: re.Match[str]) -> str:
+                  label = match.group(1)
+                  target = match.group(2).strip()
+                  if re.match(r"^[a-zA-Z][a-zA-Z0-9+.-]*:", target) or target.startswith("#"):
+                      return match.group(0)
+                  path_part, sep, fragment = target.partition("#")
+                  if not path_part.endswith(".md"):
+                      return match.group(0)
+                  resolved = (current_dir / path_part).resolve()
+                  try:
+                      rel = resolved.relative_to(src.resolve()).as_posix()
+                  except ValueError:
+                      return match.group(0)
+                  if rel not in mapping:
+                      return match.group(0)
+                  new_target = mapping[rel].removesuffix(".md")
+                  if sep:
+                      new_target += f"#{fragment}"
+                  return f"[{label}]({new_target})"
+
+              return re.sub(r"\[([^\]]+)\]\(([^)]+)\)", replace, text)
+
+          for path in files:
+              target = out / mapping[path.relative_to(src).as_posix()]
+              text = path.read_text(encoding="utf-8")
+              text = rewrite_admonitions(text)
+              target.write_text(rewrite_links(text, path), encoding="utf-8")
+
+          groups: dict[str, list[tuple[str, str]]] = {}
+          for rel, filename in mapping.items():
+              if filename == "Home.md":
+                  continue
+              parts = Path(rel).parts
+              group = title_part(parts[0]) if len(parts) > 1 else "General"
+              page = filename.removesuffix(".md")
+              label = title_part(Path(rel).stem if Path(rel).stem != "index" else parts[0])
+              groups.setdefault(group, []).append((label, page))
+
+          sidebar = ["# CaeReflex Wiki", "", "- [Home](Home)"]
+          for group in sorted(groups):
+              sidebar.append(f"- **{group}**")
+              for label, page in sorted(groups[group]):
+                  sidebar.append(f"  - [{label}]({page})")
+          sidebar.append("")
+          sidebar.append("---")
+          sidebar.append("")
+          sidebar.append("Synced from `/wiki/docs` in the main CaeReflex repository.")
+          (out / "_Sidebar.md").write_text("\n".join(sidebar) + "\n", encoding="utf-8")
+
+          print(f"Exported {len(files)} Markdown pages to {out}")
+          PY
+
+      - name: Clone GitHub Wiki repository
+        env:
+          WIKI_TOKEN: ${{ secrets.WIKI_SYNC_TOKEN || github.token }}
+        run: |
+          git clone "https://x-access-token:${WIKI_TOKEN}@github.com/${{ github.repository }}.wiki.git" .wiki
+
+      - name: Replace wiki contents
+        run: |
+          rsync -a --delete --exclude='.git' .wiki-export/ .wiki/
+
+      - name: Commit and push wiki changes
+        working-directory: .wiki
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet --exit-code; then
+            echo "GitHub Wiki is already up to date."
+            exit 0
+          fi
+          git add .
+          git commit -m "Sync wiki from /wiki/docs"
+          git push
