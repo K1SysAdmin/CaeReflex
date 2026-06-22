@@ -4,14 +4,14 @@
 
 Computer-aided engineering (CAE) projects often leave useful evidence scattered across solver folders, mesh files, result files, scripts, notes, and literature searches. A Gmsh geometry, an OpenFOAM case, a VTK/ParaView output, and a DOI search can all describe the same engineering question, but they usually live in formats that general-purpose LLM agents cannot safely inspect or cite without help.
 
-That creates a practical gap: an engineer may have simulation artefacts on disk, while a Custom GPT, Claude agent, or other LLM assistant only sees a partial explanation typed into chat.
+That creates a practical gap: an engineer may have simulation cases on disk, while a Custom GPT, Claude agent, or other LLM assistant only sees a partial explanation typed into chat.
 
 ## What the problem impedes
 
 Without a structured evidence layer, agents and reviewers can struggle to:
 
 - identify which CAE tools and file formats are present;
-- summarize case intent, detected inputs, and result artefacts consistently;
+- summarize case intent, detected inputs, and result consistently;
 - distinguish detected evidence from assumptions;
 - preserve provenance for where each piece of information came from;
 - surface inspection warnings before a human relies on the case;
@@ -21,9 +21,9 @@ Without a structured evidence layer, agents and reviewers can struggle to:
 
 ## The solution
 
-CaeReflex is a source-available Python package that turns Gmsh, OpenFOAM, and ParaView/VTK-compatible simulation artefacts into structured, agent-readable, provenance-aware, CrossRef-grounded engineering cases.
+CaeReflex is a source-available Python package that turns Gmsh, OpenFOAM, and ParaView/VTK-compatible simulations into structured, agent-readable, provenance-aware, CrossRef-grounded engineering cases.
 
-It can be used from the command line, as a local REST/OpenAPI service, or as a data-preparation layer for an LLM agent workflow. The package inspects CAE artefacts in read-only mode, creates a `ReflexCase` JSON record, exports agent context and reports, and can attach CrossRef literature metadata when explicitly requested.
+It can be used from the command line, as a local REST/OpenAPI service, or as a data-preparation layer for an LLM agent workflow. The package inspects CAE simulations in read-only mode, creates a `ReflexCase` JSON record, exports agent context and reports, and can attach CrossRef literature metadata when explicitly requested.
 
 > **Safety boundary:** CaeReflex is an inspection and documentation aid. It does **not** run solvers, validate simulations, certify engineering results, prove convergence, assess mesh adequacy, or replace qualified engineering judgement.
 
@@ -33,7 +33,7 @@ CaeReflex helps you give an LLM agent a safer, more complete view of an engineer
 
 - a normalized case identifier and summary;
 - detected CAE formats and tools;
-- extracted metadata from Gmsh, OpenFOAM, and VTK/ParaView-compatible artefacts;
+- extracted metadata from Gmsh, OpenFOAM, and VTK/ParaView-compatible simulations;
 - inspection status and warnings;
 - provenance events describing what was inspected or exported;
 - an agent-readable context object for Custom GPTs, Claude, and other agents;
@@ -42,7 +42,7 @@ CaeReflex helps you give an LLM agent a safer, more complete view of an engineer
 - REST/OpenAPI endpoints for tool-calling agents; and
 - explicit guardrails against overclaiming validation or certification.
 
-## Supported artefacts
+## Supported simulations
 
 - Gmsh `.geo` files in core mode; `.msh` files with optional mesh extras.
 - OpenFOAM-like case folders through read-only text inspection.
@@ -227,7 +227,7 @@ In ChatGPT:
 ```text
 You are a CaeReflex engineering-case reviewer.
 
-Use CaeReflex actions to inspect and summarize CAE artefacts, retrieve agent context, review inspection flags, and summarize optional CrossRef literature metadata.
+Use CaeReflex actions to inspect and summarize CAE simulations, retrieve agent context, review inspection flags, and summarize optional CrossRef literature metadata.
 
 Always call the health endpoint first when beginning a live API workflow. When the user provides a case path, import the case, retrieve the agent context, retrieve inspection flags, and then summarize the result.
 
@@ -397,7 +397,7 @@ Through a Custom GPT, Claude agent, or another LLM tool-calling workflow, CaeRef
 - **Agent-readable context:** compact JSON designed for LLM workflows.
 - **Inspection warnings:** flags for missing, unsupported, partial, or potentially risky evidence.
 - **Provenance:** records of inspection and export events.
-- **Artefact inventory:** detected files and metadata from supported CAE folders and files.
+- **Simulation inventory:** detected files and metadata from supported CAE folders and files.
 - **OpenFOAM awareness:** read-only inspection of OpenFOAM-like case folders.
 - **Gmsh awareness:** inspection of `.geo` files and optional `.msh` mesh files.
 - **VTK/ParaView awareness:** inspection of VTK-compatible result files with safe fallback behaviour.
