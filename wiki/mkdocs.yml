@@ -26,6 +26,20 @@ nav:
       - Quickstart: user-guide/quickstart.md
       - Examples: user-guide/examples.md
       - Safe Use Policy: user-guide/safe-use-policy.md
+  - Learning Projects:
+      - Overview: learning/index.md
+      - Learning Paths: learning/learning-paths.md
+      - Environment Setup: learning/environment-setup.md
+      - Assessment Rubric: learning/assessment-rubric.md
+      - Glossary: learning/glossary.md
+      - CLI-first Inspection: learning/cli-first-inspection.md
+      - Gmsh Geometry Inspection: learning/gmsh-geometry-inspection.md
+      - OpenFOAM Case Review: learning/openfoam-case-review.md
+      - VTK Result Context: learning/vtk-result-context.md
+      - CrossRef Literature Context: learning/crossref-literature-context.md
+      - REST/OpenAPI Agent Workflow: learning/rest-openapi-agent-workflow.md
+      - Adapter Extension Design: learning/adapter-extension-design.md
+      - Instructor Guide: learning/instructor-guide.md
   - Architecture:
       - Overview: architecture/index.md
       - ReflexCase Schema: architecture/reflexcase-schema.md

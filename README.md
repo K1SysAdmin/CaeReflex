@@ -67,6 +67,10 @@ pip install -e ".[gmsh]"     # optional Gmsh Python support
 pip install -e ".[all,dev]"  # everything plus test dependencies
 ```
 
+## Learning projects
+
+A structured beginner-to-expert curriculum is available in the wiki at [`wiki/docs/learning/`](wiki/docs/learning/index.md), including CLI, Gmsh, OpenFOAM, VTK, CrossRef, REST/OpenAPI, agent-workflow, and adapter-extension projects.
+
 ## Tutorial: local CAE folder to Custom GPT
 
 Use this tutorial when an engineer wants to run CaeReflex on a laptop, inspect a local folder that contains CAE artefacts, and make the resulting REST actions available to a Custom GPT. The examples assume your CAE cases live in `~/cae-workspace`; change that path to match your machine.
