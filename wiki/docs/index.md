@@ -37,6 +37,7 @@ simulation artefact
 ## Start here
 
 - [Quickstart](user-guide/quickstart.md)
+- [Learning Projects](learning/index.md)
 - [Architecture](architecture/index.md)
 - [Release controls](developer-guide/release-controls.md)
 - [Release 1.0.0](releases/1.0.0.md)
