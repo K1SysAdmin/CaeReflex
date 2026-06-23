@@ -41,6 +41,34 @@ python -m json.tool vtk_agent_context.json | head -100
 - Rich VTK/PyVista behavior can depend on optional packages.
 - Result context does not prove convergence, mesh adequacy, or physical correctness.
 
+## Expected output and interpretation
+
+A representative `vtk_agent_context.json` for `examples/vtk_minimal/sample.vtk` should show dataset and field context like this:
+
+```json
+{
+  "case_name": "sample",
+  "case_type": "vtk",
+  "detected_formats": [".vtk"],
+  "detected_tools": ["VTK/ParaView-compatible"],
+  "assets": [
+    {"asset_type": "result_file", "name": "sample.vtk", "metrics": {"dataset_type": "POLYDATA", "points": 4, "cells": null}}
+  ],
+  "result_fields": [
+    {"name": "pressure", "association": "point", "field_type": "scalar", "components": 1},
+    {"name": "velocity", "association": "point", "field_type": "vector", "components": 3}
+  ]
+}
+```
+
+Interpret the output as follows:
+
+- Extracted evidence: the `.vtk` suffix, `POLYDATA` dataset type, point count, and point-data field names are read from `examples/vtk_minimal/sample.vtk`.
+- Inferred context: `detected_tools: ["VTK/ParaView-compatible"]` indicates a compatible result format, not the actual solver or visualization workflow used.
+- Warnings: optional-reader fallback warnings, if present, mean the context may be less rich and should be surfaced to the user.
+- Provenance: the full JSON includes `vtk_inspection_started` and a trace pointing back to `sample.vtk`.
+- Unsafe claims to avoid: do not claim convergence, interpolation quality, unit correctness, solver provenance, physical correctness, mesh adequacy, or validated results from field presence alone.
+
 ## Beginner exercise
 
 Identify the inspected file and any result-context information present in the output.

@@ -44,6 +44,36 @@ sed -n '1,160p' openfoam_report.md
 - Dictionary and boundary-condition evidence can help structure review.
 - Missing or partial evidence should be carried into the final summary.
 
+## Expected output and interpretation
+
+A representative `openfoam_agent_context.json` from `examples/openfoam_cavity_minimal` should show the inspected dictionaries and initial fields:
+
+```json
+{
+  "case_name": "openfoam_cavity_minimal",
+  "case_type": "openfoam",
+  "source_files": [
+    {"relative_path": "system/controlDict", "hash_status": "complete"},
+    {"relative_path": "system/fvSchemes", "hash_status": "complete"},
+    {"relative_path": "constant/polyMesh/boundary", "hash_status": "complete"},
+    {"relative_path": "0/U", "hash_status": "complete"}
+  ],
+  "result_fields": [
+    {"name": "p", "association": "volume", "trace": {"source_files": ["0/p"]}},
+    {"name": "U", "association": "volume", "trace": {"source_files": ["0/U"]}}
+  ],
+  "inspection_warnings": []
+}
+```
+
+Interpret the output as follows:
+
+- Extracted evidence: dictionary paths, boundary-file paths, initial field names, hashes, and trace source files are read from `examples/openfoam_cavity_minimal`.
+- Inferred context: the OpenFOAM classification and summary are based on folder structure and recognized file names; CaeReflex has not run a solver.
+- Warnings: preserve every `inspection_warnings` item if present. No warnings in this tiny fixture does not imply numerical readiness or case quality.
+- Provenance: the full JSON includes `openfoam_inspection_started`; exported agent context may summarize provenance through `source_references`.
+- Unsafe claims to avoid: do not claim solver execution, convergence, Courant-number acceptability, mesh adequacy, turbulence-model suitability, physical correctness, certification, or design safety.
+
 ## Beginner exercise
 
 List three files from the case folder that CaeReflex inspected or referenced.

@@ -51,6 +51,43 @@ sed -n '1,120p' case_report.md
 - `case_report.md` is a human-readable report.
 - Warnings and safe-use statements are part of the learning output, not noise to ignore.
 
+## Expected output and interpretation
+
+A representative `agent_context.json` from `examples/openfoam_cavity_minimal` should contain stable, file-derived evidence like this:
+
+```json
+{
+  "case_name": "openfoam_cavity_minimal",
+  "case_type": "openfoam",
+  "detected_formats": ["OpenFOAM case folder"],
+  "detected_tools": ["OpenFOAM"],
+  "source_files": [
+    {"relative_path": "system/controlDict", "hash_status": "complete"},
+    {"relative_path": "0/U", "hash_status": "complete"}
+  ],
+  "result_fields": [
+    {"name": "p", "association": "volume", "trace": {"source_kind": "extracted", "source_files": ["0/p"]}},
+    {"name": "U", "association": "volume", "trace": {"source_kind": "extracted", "source_files": ["0/U"]}}
+  ]
+}
+```
+
+A representative Markdown report should start with safe-use framing:
+
+```markdown
+# CaeReflex Report — openfoam_cavity_minimal
+This report was generated from metadata extracted or inferred by CaeReflex.
+It is not an engineering validation report, certification, safety approval, or convergence proof.
+```
+
+Interpret the output as follows:
+
+- Extracted evidence: `source_files`, `detected_formats`, `detected_tools`, and `result_fields[*].trace.source_files` are direct observations from files under `examples/openfoam_cavity_minimal`.
+- Inferred context: `case_type: "openfoam"` and the human-readable summary classify the folder from its layout and known dictionary names; treat them as adapter interpretation, not solver execution.
+- Warnings: `inspection_warnings` or `inspection_flags` must be preserved verbatim when present. An empty list only means this inspection did not emit a warning; it is not proof that the case is complete.
+- Provenance: `source_references` or full-case `provenance` events identify which adapter actions produced the context.
+- Unsafe claims to avoid: do not say the simulation converged, the mesh is adequate, the boundary conditions are correct, the result is certified, or the design is safe.
+
 ## Beginner exercise
 
 Find the case identifier, detected formats, detected tools, and at least one warning or limitation.

@@ -42,6 +42,37 @@ sed -n '1,140p' gmsh_report.md
 - CaeReflex can record file evidence, detected format, and adapter findings.
 - Any downstream mesh adequacy or physical suitability claim requires independent engineering review.
 
+## Expected output and interpretation
+
+A representative `gmsh_case.json` for `examples/gmsh_minimal/t1.geo` should include geometry-script evidence like this:
+
+```json
+{
+  "case_name": "t1",
+  "case_type": "gmsh",
+  "detected_formats": [".geo"],
+  "detected_tools": ["Gmsh"],
+  "source_files": [
+    {"relative_path": "t1.geo", "suffix": ".geo", "hash_status": "complete"}
+  ],
+  "assets": [
+    {
+      "asset_type": "geometry",
+      "name": "t1.geo",
+      "metrics": {"points_declared": 4, "lines_declared": 4, "surfaces_declared": 2, "physical_groups": 2}
+    }
+  ]
+}
+```
+
+Interpret the output as follows:
+
+- Extracted evidence: the `.geo` suffix, file hash status, declared points, lines, surfaces, and physical groups come from `examples/gmsh_minimal/t1.geo`.
+- Inferred context: `case_type: "gmsh"`, `detected_tools: ["Gmsh"]`, and `asset_type: "geometry"` are adapter classifications based on the input file.
+- Warnings: any warning about missing mesh-reader support or partial parsing should be treated as a review prompt, not hidden from learners.
+- Provenance: a full case includes events such as `gmsh_inspection_started` with the inspected path.
+- Unsafe claims to avoid: do not claim that a mesh was generated, mesh quality is acceptable, geometry is watertight, boundary groups are physically correct, or the design is validated.
+
 ## Beginner exercise
 
 Identify the inspected source file, detected format, and generated output file.
