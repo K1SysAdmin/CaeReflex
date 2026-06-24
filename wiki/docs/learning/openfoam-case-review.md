@@ -74,6 +74,18 @@ Interpret the output as follows:
 - Provenance: the full JSON includes `openfoam_inspection_started`; exported agent context may summarize provenance through `source_references`.
 - Unsafe claims to avoid: do not claim solver execution, convergence, Courant-number acceptability, mesh adequacy, turbulence-model suitability, physical correctness, certification, or design safety.
 
+
+## UX presentation guidance
+
+An OpenFOAM review UI should make it easy to distinguish read-only inspection from engineering acceptance. Treat the adapter output as a review workspace, not as a pass/fail certificate.
+
+- **Extracted facts:** display dictionary paths, initial field files, boundary-condition records, material properties, numerical settings, hashes, and trace source files under "Extracted evidence". Prefer tables that show each record, the file path it came from, and whether hashing was complete or partial.
+- **Inferred facts:** separate folder classification, generated summaries, and next-step recommendations under "Inspection interpretation". Use wording that communicates inference from folder structure and known OpenFOAM file names, not solver execution.
+- **Inspection warnings:** show missing-file flags, residual-like log notices, partial-hash notices, and any `inspection_warnings` as high-contrast review alerts. Warning cards should stay visible when the import/export/API command succeeds; a successful status must not downgrade, bury, or visually mask an engineering review warning.
+- **Provenance:** expose the adapter timeline, including events such as `openfoam_inspection_started`, and link each displayed field or setting back to the source file that produced it. If a summary mentions a field, patch, or dictionary, the UI should offer a direct provenance link.
+- **Safe-use policy:** keep "not solver execution" and "not validation/certification/convergence proof" copy near the case summary, report export button, and any AI-generated review note.
+- **Human follow-up checks:** provide an explicit reviewer checklist for mesh quality, patch naming and semantics, dimensions and units, turbulence/transport assumptions, solver choice, discretization schemes, tolerances, residual histories, conservation checks, benchmark comparisons, and acceptance criteria. Require warning-specific follow-up before presenting the case as ready for engineering decision-making.
+
 ## Beginner exercise
 
 List three files from the case folder that CaeReflex inspected or referenced.

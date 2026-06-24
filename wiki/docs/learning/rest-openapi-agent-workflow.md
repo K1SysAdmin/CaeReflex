@@ -193,6 +193,18 @@ Expected UX behavior:
 - Require users or agent policies to acknowledge warnings before presenting engineering interpretation.
 - Keep safety copy near the summary: CaeReflex reports structured evidence and limitations; it does not certify validation, convergence, mesh adequacy, design safety, or solver correctness.
 
+
+## UX presentation guidance
+
+For a REST/OpenAPI client, design the user journey around response interpretation and safety gates, not just HTTP status. HTTP 200, `status: "success"`, or a reachable OpenAPI schema confirms API workflow health only; it does not clear inspection warnings or engineering risk.
+
+- **Extracted facts:** show fields from `data.agent_context`, `/agent-context`, and stored case records in an evidence view with source paths, hashes, detected formats, and trace links. Keep raw JSON available, but summarize it into human-readable evidence rows.
+- **Inferred facts:** present `summary`, `next_recommended_actions`, case classification, and agent-generated text in a distinct inferred/assistant section. Make the UI language clear that these are workflow interpretations, not validation results.
+- **Inspection warnings:** fetch and merge top-level import `warnings`, `inspection_flags`, `/inspection-flags`, and `agent_context.inspection_warnings` before producing or displaying a case summary. Render them as prominent alert banners or review cards that remain visible even when the API call returned success; never hide them behind successful HTTP/API status indicators.
+- **Provenance:** show the `case_id`, request path, workspace-relative path, `provenance_summary`, and links to follow-up endpoints so users can trace which API calls produced each displayed statement. If data is stale or the `case_id` came from another workspace, mark provenance as uncertain and require re-import.
+- **Safe-use policy:** place safe-use rules directly in the agent/tool UI: the API supports bounded inspection, not unrestricted filesystem access, solver execution, validation, certification, convergence proof, or design-safety approval. If CrossRef was not explicitly requested, do not imply external literature was attached.
+- **Human follow-up checks:** include a post-import checklist that prompts qualified users to review warnings, raw source files, OpenFOAM-specific engineering checks, solver logs, validation evidence, authentication/workspace exposure, and any absolute-path or stale-case-id issues before accepting an AI-generated summary. Empty warning arrays should be displayed as "No inspection warnings were emitted for this run," not as an all-clear.
+
 ## Beginner exercise
 
 Identify the health endpoint, OpenAPI endpoint, import endpoint, and agent-context endpoint.

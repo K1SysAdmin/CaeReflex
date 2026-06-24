@@ -88,6 +88,18 @@ Interpret the output as follows:
 - Provenance: `source_references` or full-case `provenance` events identify which adapter actions produced the context.
 - Unsafe claims to avoid: do not say the simulation converged, the mesh is adequate, the boundary conditions are correct, the result is certified, or the design is safe.
 
+
+## UX presentation guidance
+
+When turning CLI inspection output into a UI, design the page around evidence, uncertainty, and review readiness rather than around command success alone. A successful command means the inspection pipeline produced output; it does not mean the case is validated or safe.
+
+- **Extracted facts:** show file-derived observations in an evidence panel with labels such as "Extracted from files". Include source paths, hashes, detected formats/tools, and result fields next to the exact file or trace that produced them.
+- **Inferred facts:** place classifications, summaries, and recommended next actions in a separate "Inferred by inspection" panel. Use tentative language such as "classified as" or "appears to be" instead of correctness language.
+- **Inspection warnings:** render `inspection_warnings`, `inspection_flags`, and report limitations as visually prominent alerts near the top of the page and beside any affected summary. Do not hide warnings behind a green command-success banner, a collapsed details drawer, or an "advanced" tab; warnings must remain visible even when all commands exit successfully.
+- **Provenance:** provide a provenance drawer or timeline that links each displayed fact to `source_references`, full-case provenance events, command outputs, and generated files. Users should be able to answer "where did this statement come from?" without reading raw JSON first.
+- **Safe-use policy:** keep a persistent safe-use notice next to generated summaries: CaeReflex output is structured inspection evidence, not validation, certification, convergence proof, mesh-quality approval, or design-safety approval.
+- **Human follow-up checks:** end the page with a checklist for qualified review, including boundary conditions, mesh quality, solver logs, convergence evidence, physical assumptions, units, acceptance criteria, and any warning-specific follow-up. Empty warnings should display neutral copy such as "No inspection warnings were emitted for this run," not "no issues found."
+
 ## Beginner exercise
 
 Find the case identifier, detected formats, detected tools, and at least one warning or limitation.
