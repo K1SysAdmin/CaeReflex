@@ -62,7 +62,7 @@ curl "http://127.0.0.1:8765/cases/CASE_ID/inspection-flags"
 A representative health response is intentionally small:
 
 ```json
-{"status": "ok", "service": "caereflex"}
+{"status": "success", "service": "caereflex", "version": "..."}
 ```
 
 A representative import response for `examples/openfoam_cavity_minimal` should include the stored case identifier and optional agent context:
@@ -98,6 +98,100 @@ Interpret the output as follows:
 - Warnings: top-level `warnings` and `/inspection-flags` must be fetched and echoed before summarization. An empty list is only an absence of emitted flags for that run.
 - Provenance: `provenance_summary` identifies adapter events that produced the stored case.
 - Unsafe claims to avoid: agents must not claim validation, convergence, mesh adequacy, certification, design safety, unrestricted filesystem access, or CrossRef attachment unless the corresponding endpoint was explicitly called.
+
+## Full-stack validation checklist
+
+Use this sequence as a smoke test for a local UI, agent connector, or OpenAPI action configuration. The examples are self-contained: they validate request shape, response handling, and UX behavior without requiring CrossRef, solver execution, or any live external service.
+
+### 1. Successful health check
+
+```bash
+curl -sS "http://127.0.0.1:8765/health"
+```
+
+Expected response: HTTP 200 with `status: "success"`, `service: "caereflex"`, and a `version` string. The client should treat this as API readiness only, not proof that any case has been inspected.
+
+### 2. OpenAPI schema retrieval
+
+```bash
+curl -sS "http://127.0.0.1:8765/openapi.yaml" | sed -n '1,40p'
+```
+
+Expected response: HTTP 200 with YAML containing the CaeReflex API title, version, and paths such as `/health`, `/cases/import`, `/cases/{case_id}/agent-context`, and `/cases/{case_id}/inspection-flags`. A UI or agent setup screen can use this to verify that the configured server exposes the expected tool surface before enabling import actions.
+
+### 3. Valid case import
+
+```bash
+curl -sS -X POST "http://127.0.0.1:8765/cases/import" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "path": "examples/openfoam_cavity_minimal",
+    "adapter": "auto",
+    "attach_crossref": false,
+    "return_agent_context": true
+  }'
+```
+
+Expected response: HTTP 200 with an inspection `status`, a generated `case_id`, a short `summary`, `warnings`, `inspection_flags`, `provenance_summary`, and `next_recommended_actions`. When `return_agent_context` is `true`, the response also includes `data.agent_context` with safe-use policy and source-derived evidence. Store the returned `case_id` for follow-up calls rather than inventing one.
+
+### 4. Invalid workspace-relative path
+
+```bash
+curl -sS -X POST "http://127.0.0.1:8765/cases/import" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "path": "examples/does-not-exist",
+    "adapter": "auto",
+    "attach_crossref": false,
+    "return_agent_context": false
+  }'
+```
+
+Expected response: HTTP 400 or a failed/unsupported inspection response, depending on adapter detection and server configuration. The important client behavior is to show the path problem as an import failure, keep the path workspace-relative in any retry prompt, and avoid falling back to absolute host paths.
+
+### 5. Missing or unknown `case_id`
+
+```bash
+curl -sS "http://127.0.0.1:8765/cases/CASE_ID_THAT_WAS_NOT_RETURNED/agent-context"
+curl -sS "http://127.0.0.1:8765/cases/CASE_ID_THAT_WAS_NOT_RETURNED/inspection-flags"
+```
+
+Expected response: an error response for the unknown case identifier. The client should tell the user that the case is not in the current workspace case store, then offer to import a workspace-relative path. It should not fabricate agent context, suppress the error, or reuse a stale `case_id` from another workspace.
+
+### 6. External binding and API-key safety expectations
+
+For localhost development, no API key is required:
+
+```bash
+caereflex serve --host 127.0.0.1 --port 8765 --workspace .
+```
+
+For external exposure, require an API key at server startup and send it with every request:
+
+```bash
+caereflex serve --host 0.0.0.0 --port 8765 --workspace . --api-key "$CAEREFLEX_API_KEY"
+
+curl -sS "http://SERVER_HOST:8765/health" \
+  -H "x-api-key: $CAEREFLEX_API_KEY"
+```
+
+Expected behavior: serving outside localhost without an API key is rejected by the CLI, and external-mode API calls require the `x-api-key` header. Tool descriptions for agents should also say that case paths are bounded by the configured workspace and that the API is an inspection interface, not unrestricted filesystem access.
+
+### 7. Client-side UX guidance for inspection warnings
+
+After a successful import, retrieve warnings before generating any summary:
+
+```bash
+curl -sS "http://127.0.0.1:8765/cases/CASE_ID/inspection-flags"
+curl -sS "http://127.0.0.1:8765/cases/CASE_ID/agent-context"
+```
+
+Expected UX behavior:
+
+- Show `inspection_flags`, top-level import `warnings`, and `agent_context.inspection_warnings` in a visible review panel before the summary body.
+- If warnings are empty, show neutral copy such as "No inspection warnings were emitted for this run" rather than "the case is valid."
+- Require users or agent policies to acknowledge warnings before presenting engineering interpretation.
+- Keep safety copy near the summary: CaeReflex reports structured evidence and limitations; it does not certify validation, convergence, mesh adequacy, design safety, or solver correctness.
 
 ## Beginner exercise
 
